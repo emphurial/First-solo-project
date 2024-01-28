@@ -1,4 +1,5 @@
 from tkinter import *
+from player import Player
 
 class Window():
     def __init__(self):
@@ -43,13 +44,21 @@ class Window():
     def _new_game(self):
         self._new_window('New Game')
         self._menu_header('Choose your class.')
-        #Need to add warrior
-        self._menu_button(self.window, 'Warrior', 18, 0.5)
-        #Need to add wizard
-        self._menu_button(self.window, 'Wizard', 18, 0.6)
+        self._menu_button(self.window, 'Warrior', 18, 0.5, self._warrior_chosen)
+        self._menu_button(self.window, 'Wizard', 18, 0.6, self._wizard_chosen)
         self._menu_button(self.window, 'Back', 18, 0.9, self._back_button)
 
+    def _warrior_chosen(self):
+        Player._warrior()
+        self._game_start()
 
+    def _wizard_chosen(self):
+        Player._wizard()
+        self._game_start()
+
+    def _game_start(self):
+        self._new_window('The Journey Begins')
+        self._menu_button(self.window, 'Next', 18, 0.9)
 
     def _back_button(self):
         self.window.destroy()
