@@ -4,6 +4,8 @@ class Player():
     def __init__(self):
         self._player_name = None
         self._player_class = None
+        #Male = 1, Female = 2, Other = 3
+        self._player_gender = None
         self._player_level = 1
         self._player_xp = 0
         self._player_gold = 0
