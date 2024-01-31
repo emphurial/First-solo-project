@@ -12,6 +12,7 @@ class Window():
         self.entry = None
         self.previous_menu = None
         self.canvas = None
+        Player.__init__(Player)
         #game introduction
         self._menu_header("Welcome to the World \nof \nINSERT NAME HERE")
         self._menu_button("Start", 18, 0.5, self._start_menu)
@@ -25,9 +26,9 @@ class Window():
         menu_header.place(relx= 0.5, rely=rely, anchor=CENTER)
         self.screen.append(menu_header)
 
-    def _menu_button(self, text, fontsize, ypos, command=None, width=8):
+    def _menu_button(self, text, fontsize, ypos, command=None, width=8, xpos = 0.5):
         button = Button(self.window, text=text, font=('times new roman', fontsize), width=width, command=command)
-        button.place(relx=0.5, rely=ypos, anchor=CENTER)
+        button.place(relx=xpos, rely=ypos, anchor=CENTER)
         self.screen.append(button)     
 
     def _game_header(self, text, textfont = ('times new roman', 30), relx=0.02, rely=0.1, fg='dark blue'):
@@ -52,9 +53,28 @@ class Window():
             button = Button(self.window, text=text, font=('times new roman', 18), width=9, command=command)
             button.place(relx=0.8, rely=rely)
             self.screen.append(button)
-        ################
-        #Add Stats Menu
-        _game_menu_button('Stats', 0.0)
+        # Stat Screen
+        def _display_stats():
+            self._clear_screen()
+            self._game_menu()
+            def _stat_menu_label(text, ypos, xpos = 0.0):
+                label = Label(self.window, text=text, font=('times new roman', 18), fg='black')
+                label.place(relx=xpos, rely=ypos)
+                self.screen.append(label)
+            
+            name = Label(self.window, text=f'{Player._player_name} the {Player._player_gender} {Player._player_class}.', font=('times new roman', 25))
+            name.place(relx=0.0, rely=0.02)
+            self.screen.append(name)
+            _stat_menu_label(f'Level : {Player._player_level}', 0.2)
+            _stat_menu_label(f'Experience : {Player._player_xp}', 0.2, 0.2)
+            _stat_menu_label(f'Gold : {Player._player_gold}', 0.2, 0.5)
+            _stat_menu_label(f'Health : ({Player._player_current_health} / {Player._player_max_health})', 0.3)
+            _stat_menu_label(f'Mana : ({Player._player_max_mana} / {Player._player_max_mana})', 0.4)
+            _stat_menu_label(f'Attack : {Player._player_attack}', 0.5)
+            _stat_menu_label(f'Defence : {Player._player_defence}', 0.6)
+            self._menu_button('Back', 18, 0.9, self._back_button, 8, 0.4)
+
+        _game_menu_button('Stats', 0.0, _display_stats)
         ################
         #Add Items Menu
         _game_menu_button('Items', 0.07)
@@ -100,10 +120,9 @@ class Window():
 
     #Character Creation
     def _new_game(self, no_name = 0, no_gender = 0):
-        Player()
         self._clear_screen()
-        v = IntVar()
-        v.set(1)
+        str = StringVar()
+        str.set('Male')
         if no_name == 1:
             invalid = Label(self.window, text = 'Please enter a name.', fg='red', font=('times new roman', 20))
             invalid.place(relx=0.5, rely=0.3, anchor=CENTER)
@@ -114,18 +133,18 @@ class Window():
         self._menu_header("Who are you?")
         self.entry = Entry(self.window)
         self.entry.place(relx=0.5, rely=0.5, anchor=CENTER)
-        male = Radiobutton(self.window, text='Male', variable=v, value=1)
-        female = Radiobutton(self.window, text='Female', variable=v, value=2)
-        other = Radiobutton(self.window, text='Other', variable=v, value=3)
+        male = Radiobutton(self.window, text='Male', variable=str, value='Male')
+        female = Radiobutton(self.window, text='Female', variable=str, value='Female')
+        other = Radiobutton(self.window, text='Other', variable=str, value='')
         self.screen.append(male)
         self.screen.append(female)
         self.screen.append(other)
         male.place(relx=0.4, rely=0.6)
         female.place(relx=0.4, rely=0.65)
         other.place(relx=0.4, rely=0.7)
-        self._menu_button('Confirm', 18, 0.9, lambda: self._store_name(self.entry.get(), v.get()))
+        self._menu_button('Confirm', 18, 0.9, lambda: self._store_name(self.entry.get(), str.get()))
 
-    #Stores player name
+    #Stores player name and gender
     def _store_name(self, name_entry, gender):
         if len(name_entry) == 0:
             self._new_game(1)
